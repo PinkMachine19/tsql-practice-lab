@@ -27,11 +27,38 @@
   cards.forEach((card,index)=>{const match=number?Number(card.dataset.mapQuestion)===Number(number):card.textContent.toLowerCase().includes(query);card.hidden=!match;document.querySelectorAll('#mapping-table tbody tr')[index].hidden=!match;if(match)count++;});
   document.querySelector('#map-search-status').textContent=`${count} ${count===1?'question':'questions'} found`;
  });
- document.querySelectorAll('.copy').forEach(button=>button.addEventListener('click',async()=>{
-  const text=button.parentElement.querySelector('code').textContent;
-  try{await navigator.clipboard.writeText(text);button.textContent='Copied';setTimeout(()=>button.textContent='Copy SQL',1600);}
-  catch{notify('Clipboard access is unavailable. Select the SQL text and copy it manually.');}
- }));
+ function legacyCopy(text){
+  const field=document.createElement('textarea');field.value=text;field.readOnly=true;
+  field.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px;';
+  const previous=document.activeElement;document.body.append(field);
+  try{field.focus({preventScroll:true});field.select();field.setSelectionRange(0,text.length);return document.execCommand('copy');}
+  catch{return false;}finally{field.remove();previous?.focus({preventScroll:true});}
+ }
+ document.querySelectorAll('.code-wrap').forEach(block=>{
+  const button=block.querySelector('.copy');const status=block.querySelector('.copy-status');
+  const fallback=block.querySelector('.copy-fallback');const field=block.querySelector('.copy-text');
+  const language=block.dataset.language;let resetTimer;
+  const succeeded=()=>{button.textContent='Copied ✓';status.textContent=`${language} copied. Paste the whole block into your editor.`;fallback.hidden=true;clearTimeout(resetTimer);resetTimer=setTimeout(()=>button.textContent=`Copy ${language}`,2500);};
+  const showFallback=()=>{field.value=block.querySelector('pre code').textContent;fallback.hidden=false;button.textContent=`Copy ${language}`;status.textContent='Automatic copy was blocked. Use Select all below, then your device’s Copy command.';};
+  button.addEventListener('click',()=>{
+   const text=block.querySelector('pre code').textContent;
+   // Start the write synchronously inside the tap/click: Safari requires user activation.
+   // Do not fetch, await, or defer anything before this call.
+   try{
+    if(navigator.clipboard?.writeText){const write=navigator.clipboard.writeText(text);status.textContent='Copying…';write.then(succeeded,showFallback);}
+    else if(legacyCopy(text))succeeded();else showFallback();
+   }catch{showFallback();}
+  });
+  block.querySelector('.select-code').addEventListener('click',()=>{field.focus({preventScroll:true});field.select();field.setSelectionRange(0,field.value.length);status.textContent='All code selected. Use Copy in your device’s selection menu.';});
+  block.querySelector('.wrap-code').addEventListener('change',event=>block.classList.toggle('wrapped',event.target.checked));
+ });
+ function revealLinkedCode(){
+  let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
+  if(!id)return;const target=document.getElementById(id);if(!target)return;
+  const details=target.matches('details')?target:target.querySelector('details');
+  if(details){details.open=true;target.scrollIntoView({block:'start'});}
+ }
+ revealLinkedCode();window.addEventListener('hashchange',revealLinkedCode);
  const search=document.querySelector('#lesson-search');
  if(search)search.addEventListener('input',()=>{
   let count=0;

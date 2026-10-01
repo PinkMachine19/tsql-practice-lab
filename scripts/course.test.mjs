@@ -2,6 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {lessons,groups} from './course.mjs';
+import {interview} from './interview.mjs';
+import {highlight} from './code-block.mjs';
+test('syntax coloring preserves every character of all SQL scripts',()=>{
+ const scripts=[...lessons.map(l=>l.sql),...interview.map(q=>q.sql),...['00-setup.sql','01-verify.sql'].map(name=>fs.readFileSync(new URL(`../sql/${name}`,import.meta.url),'utf8'))];
+ for(const sql of scripts){
+  const plain=highlight(sql).replace(/<\/?span\b[^>]*>/g,'').replaceAll('&quot;','"').replaceAll('&gt;','>').replaceAll('&lt;','<').replaceAll('&amp;','&');
+  assert.equal(plain,sql);
+ }
+});
 test('Course IDs, topics, and questions remain coherent',()=>{
  assert.equal(new Set(lessons.map(l=>l.id)).size,32);
  assert.equal(new Set(lessons.map(l=>l.group)).size,groups.length);

@@ -2,6 +2,19 @@
 
 Validated on 2026-10-01.
 
+## Inline SQL and iPad copy update
+
+The site now presents setup, verification, lesson solutions, and interview drills in native expandable code blocks. Public navigation no longer requires opening or downloading SQL files. SQL files remain in the repository for source control and regression checks.
+
+- Syntax coloring preserves every character in all 55 authored SQL scripts (32 lessons, 21 drills, setup, and verification).
+- Chromium tested actual clipboard write and native paste, including procedure `GO` separators and whitespace.
+- WebKit with an iPad Pro touch viewport tested the original Clipboard API call with active user activation and the exact SQL payload. The write succeeded. Windows WebKit automation did not reliably expose clipboard read-back or native paste, so a physical-iPad paste round trip is not claimed.
+- Both engines tested permission-denied fallback, complete manual selection, inline setup and verification, automatic expansion of hash-linked blocks, and display-only line wrapping.
+- Copy targets are at least 44 pixels tall. The layout fits 834-pixel tablet and 390-pixel phone viewports.
+- Existing quiz, notes, progress, search, and map tests continue to pass in Chromium.
+
+The unchanged SQL was not rerun against Azure for this presentation-only update.
+
 ## Static site
 
 - Build generated 32 lesson pages, 64 explained quiz questions, and 21 interview-question drill sections.

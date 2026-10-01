@@ -11,10 +11,11 @@ for(const file of walk(docs)){
  const content=fs.readFileSync(file,'utf8');
  if(/AI assisted|learn-with-ai|visit-relay|placeholder-block|Quiz goblin|Phase 1/i.test(content))errors.push(`Stale content in ${file}`);
  if(file.endsWith('.html')){
+  if(/<a\b[^>]*(?:\bdownload\b|href="[^"]*\.sql")/.test(content))errors.push(`SQL should be inline, not linked as a download: ${file}`);
   if(!content.includes('<main id="main"'))errors.push(`No main landmark: ${file}`);
   for(const match of content.matchAll(/(?:href|src)="([^"]+)"/g)){
    const url=match[1];if(/^(https?:|#|data:)/.test(url))continue;
-   const target=path.resolve(path.dirname(file),decodeURIComponent(url.split('#')[0]));
+   const target=path.resolve(path.dirname(file),decodeURIComponent(url.split(/[?#]/)[0]));
    if(!target.startsWith(docs+path.sep))errors.push(`Link escapes docs: ${url}`);
    else if(!fs.existsSync(target))errors.push(`Broken link in ${file}: ${url}`);
   }

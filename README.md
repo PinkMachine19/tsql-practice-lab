@@ -4,14 +4,20 @@ Hands-on SQL Server and Azure SQL Database practice in SSMS: **32 complete lesso
 
 **[Open the lab](https://pinkmachine19.github.io/tsql-practice-lab/)** · **[Quiz bank](https://pinkmachine19.github.io/tsql-practice-lab/quizzes/index.html)**
 
-**[Interview question map](https://pinkmachine19.github.io/tsql-practice-lab/interview-map/index.html)** maps all 21 questions from the Worldwide Importers SQL Interview Survival Sheet to the corresponding lessons. Each question includes a runnable `InterviewLab` adaptation, expected results, dataset differences, and a SQL download. Lessons link back to their matching sheet questions. The full Wide World Importers database is not required.
+**[Interview question map](https://pinkmachine19.github.io/tsql-practice-lab/interview-map/index.html)** maps all 21 questions from the Worldwide Importers SQL Interview Survival Sheet to the corresponding lessons. Each question includes a runnable `InterviewLab` adaptation, expected results, dataset differences, and a copyable code block. Lessons link back to their matching sheet questions. The full Wide World Importers database is not required.
 
 ## Start here
 
 1. Connect to an existing database named `InterviewLab` in SSMS. For Azure SQL, use your logical server endpoint and Microsoft Entra MFA.
-2. Run [`sql/00-setup.sql`](sql/00-setup.sql) once. It creates only the `lab` schema and refuses to overwrite an existing schema.
-3. Run [`sql/01-verify.sql`](sql/01-verify.sql). Expect 5 customers, 4 products, 6 orders, 9 items, and 4 payments; gross order total 895 and payments 205.
+2. Expand [Create tables and seed data](https://pinkmachine19.github.io/tsql-practice-lab/setup/index.html#setup-sql), tap **Copy SQL**, and run the whole block once. It creates only the `lab` schema and refuses to overwrite an existing schema.
+3. Copy and run [Verify the dataset](https://pinkmachine19.github.io/tsql-practice-lab/setup/index.html#verify-sql). Expect 5 customers, 4 products, 6 orders, 9 items, and 4 payments; gross order total 895 and payments 205.
 4. Follow the lessons in order. Predict the result, write a query, reveal the solution, and answer the review questions.
+
+## Copying on iPad
+
+Setup, verification, all lesson scripts, and all interview drills appear in expandable, syntax-colored code blocks. Tap **Copy SQL** to copy plain text with original indentation and `GO` separators. **Wrap lines** changes the display only. No file download is required.
+
+The copy operation starts directly in the tap handler, as [WebKit requires](https://webkit.org/blog/10855/async-clipboard-api/). If permission is blocked, the block exposes a read-only text area and **Select all SQL**; use the device’s Copy command on that selection. A legacy copy method supports browsers without the modern Clipboard API. Success is shown only after the browser reports that the copy succeeded.
 
 ## Coverage
 
@@ -61,7 +67,7 @@ The build checks local links and stale content. Browser progress, notes, and qui
 
 All 32 lesson solutions and all 21 interview drills were executed successfully against Azure SQL Database on 2026-10-01. Checks included expected row counts, ranking ties, the 1.2 average, optimistic concurrency, a two-row audit trigger, transaction rollback, and Q20’s inflated 110 versus corrected 55 totals. The isolated validation schema was removed afterward. See [validation details](VALIDATION.md).
 
-`npm run test:browser` tests the UI with Playwright (installed Microsoft Edge locally; Chromium in CI). To repeat the optional live SQL checks from PowerShell with an Azure CLI account that can administer a practice database:
+`npm run test:browser` tests the UI with Playwright (installed Microsoft Edge locally; Chromium in CI), plus WebKit with an iPad Pro touch viewport for the inline-code controls. Install the WebKit test browser with `npx playwright install webkit`. Chromium covers native clipboard paste; WebKit covers exact copy payloads, tap activation, and manual selection. These automated checks do not replace a physical-iPad test. To repeat the optional live SQL checks from PowerShell with an Azure CLI account that can administer a practice database:
 
 ```powershell
 .\scripts\validate-sql.ps1 -Server '<your-server>.database.windows.net' -Subscription '<your-subscription-id>'
