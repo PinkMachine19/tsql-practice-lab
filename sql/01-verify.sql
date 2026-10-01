@@ -1,0 +1,10 @@
+SET NOCOUNT ON;
+IF DB_NAME() <> N'InterviewLab' THROW 51000, 'Connect to InterviewLab.', 1;
+IF (SELECT COUNT(*) FROM lab.Customers) <> 5 THROW 51002, 'Expected 5 customers.', 1;
+IF (SELECT COUNT(*) FROM lab.Products) <> 4 THROW 51002, 'Expected 4 products.', 1;
+IF (SELECT COUNT(*) FROM lab.Orders) <> 6 THROW 51002, 'Expected 6 orders.', 1;
+IF (SELECT COUNT(*) FROM lab.OrderItems) <> 9 THROW 51002, 'Expected 9 line items.', 1;
+IF (SELECT COUNT(*) FROM lab.Payments) <> 4 THROW 51002, 'Expected 4 payments.', 1;
+IF (SELECT SUM(Quantity * UnitPrice) FROM lab.OrderItems) <> 895.00 THROW 51002, 'Expected gross order total 895.00.', 1;
+IF (SELECT SUM(Amount) FROM lab.Payments) <> 205.00 THROW 51002, 'Expected payments of 205.00.', 1;
+SELECT N'All seed checks passed' AS Result, DB_NAME() AS DatabaseName;

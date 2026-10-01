@@ -1,0 +1,866 @@
+[
+  {
+    "id": "01",
+    "title": "Connect with SSMS",
+    "group": 0,
+    "questions": [
+      {
+        "prompt": "Where does a SELECT execute?",
+        "options": [
+          "Inside SSMS",
+          "On the database service",
+          "In GitHub Pages"
+        ],
+        "answer": 1,
+        "explanation": "SSMS sends the batch to the database engine."
+      },
+      {
+        "prompt": "What does GO do?",
+        "options": [
+          "Commits a transaction",
+          "Changes databases",
+          "Separates client-side batches"
+        ],
+        "answer": 2,
+        "explanation": "SSMS recognizes GO; the engine does not execute it as T-SQL."
+      }
+    ]
+  },
+  {
+    "id": "02",
+    "title": "Read the sample schema",
+    "group": 0,
+    "questions": [
+      {
+        "prompt": "What identifies an order line?",
+        "options": [
+          "CustomerID",
+          "OrderID and ProductID",
+          "ProductName"
+        ],
+        "answer": 1,
+        "explanation": "The composite primary key prevents the same product appearing twice on one order."
+      },
+      {
+        "prompt": "How do products relate to orders?",
+        "options": [
+          "Many-to-many through OrderItems",
+          "Every product has one order",
+          "They have no relationship"
+        ],
+        "answer": 0,
+        "explanation": "OrderItems stores each order/product association and its quantity."
+      }
+    ]
+  },
+  {
+    "id": "03",
+    "title": "Types, conversions, and NULL",
+    "group": 0,
+    "questions": [
+      {
+        "prompt": "Which predicate finds missing cities?",
+        "options": [
+          "City = NULL",
+          "City IS NULL",
+          "City = N'NULL'"
+        ],
+        "answer": 1,
+        "explanation": "Equality with NULL evaluates to unknown, not true."
+      },
+      {
+        "prompt": "Which type stores an exact unit price?",
+        "options": [
+          "float",
+          "rowversion",
+          "decimal(10,2)"
+        ],
+        "answer": 2,
+        "explanation": "decimal stores fixed precision and scale without floating-point approximation."
+      }
+    ]
+  },
+  {
+    "id": "04",
+    "title": "Filter and project",
+    "group": 1,
+    "questions": [
+      {
+        "prompt": "Which clause filters individual rows?",
+        "options": [
+          "WHERE",
+          "HAVING",
+          "ORDER BY"
+        ],
+        "answer": 0,
+        "explanation": "WHERE filters rows before aggregation."
+      },
+      {
+        "prompt": "Does SELECT guarantee insertion order?",
+        "options": [
+          "Yes",
+          "Only with a primary key",
+          "No; use ORDER BY"
+        ],
+        "answer": 2,
+        "explanation": "A result has no guaranteed order without ORDER BY."
+      }
+    ]
+  },
+  {
+    "id": "05",
+    "title": "TOP and stable pagination",
+    "group": 1,
+    "questions": [
+      {
+        "prompt": "What makes TOP deterministic?",
+        "options": [
+          "A useful index alone",
+          "ORDER BY with a unique tie-breaker",
+          "A small table"
+        ],
+        "answer": 1,
+        "explanation": "Ordering resolves both the sorting rule and tied positions."
+      },
+      {
+        "prompt": "Which syntax pages T-SQL rows?",
+        "options": [
+          "LIMIT 2 OFFSET 2",
+          "FETCH 2 without ordering",
+          "ORDER BY … OFFSET 2 ROWS FETCH NEXT 2 ROWS ONLY"
+        ],
+        "answer": 2,
+        "explanation": "OFFSET/FETCH is part of ORDER BY in T-SQL."
+      }
+    ]
+  },
+  {
+    "id": "06",
+    "title": "Date ranges without surprises",
+    "group": 1,
+    "questions": [
+      {
+        "prompt": "Why avoid an end timestamp of 23:59:59?",
+        "options": [
+          "It is always invalid",
+          "Later fractional seconds may be excluded",
+          "It selects next month"
+        ],
+        "answer": 1,
+        "explanation": "A next-day exclusive boundary includes all supported time precision."
+      },
+      {
+        "prompt": "Which predicate keeps the column unwrapped?",
+        "options": [
+          "MONTH(OrderDate) = 2",
+          "YEAR(OrderDate) = 2026",
+          "OrderDate >= @Start"
+        ],
+        "answer": 2,
+        "explanation": "An unwrapped range predicate can support an index seek."
+      }
+    ]
+  },
+  {
+    "id": "07",
+    "title": "Join related rows",
+    "group": 1,
+    "questions": [
+      {
+        "prompt": "What is the result grain here?",
+        "options": [
+          "One customer",
+          "One order",
+          "One payment"
+        ],
+        "answer": 1,
+        "explanation": "Each order joins to its single customer."
+      },
+      {
+        "prompt": "Why can Ada appear twice?",
+        "options": [
+          "A corrupt primary key",
+          "An accidental cross join",
+          "She owns two orders"
+        ],
+        "answer": 2,
+        "explanation": "Repeating parent attributes is expected at child grain."
+      }
+    ]
+  },
+  {
+    "id": "08",
+    "title": "Keep missing matches",
+    "group": 1,
+    "questions": [
+      {
+        "prompt": "Which count returns zero for an unmatched customer?",
+        "options": [
+          "COUNT(*)",
+          "COUNT(o.OrderID)",
+          "COUNT(c.CustomerID)"
+        ],
+        "answer": 1,
+        "explanation": "The unmatched right-side key is NULL and COUNT(column) skips it."
+      },
+      {
+        "prompt": "Where can a child filter preserve all customers?",
+        "options": [
+          "In the ON condition",
+          "Only in WHERE",
+          "Only in ORDER BY"
+        ],
+        "answer": 0,
+        "explanation": "A filter in ON limits matches while retaining unmatched left rows."
+      }
+    ]
+  },
+  {
+    "id": "09",
+    "title": "Find absence with NOT EXISTS",
+    "group": 1,
+    "questions": [
+      {
+        "prompt": "Which customer has no orders?",
+        "options": [
+          "Cora",
+          "Emi",
+          "Dev"
+        ],
+        "answer": 1,
+        "explanation": "Cora has order 104; Emi has no related row."
+      },
+      {
+        "prompt": "Does SELECT 1 mean EXISTS counts one row?",
+        "options": [
+          "Yes",
+          "It limits the query to one row",
+          "No; it tests whether any row exists"
+        ],
+        "answer": 2,
+        "explanation": "EXISTS tests existence, not the projected value."
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "title": "Prevent join multiplication",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "Two lines joined to two payments produce how many rows?",
+        "options": [
+          "2",
+          "3",
+          "4"
+        ],
+        "answer": 2,
+        "explanation": "Each line matches both payments: 2 × 2."
+      },
+      {
+        "prompt": "What fixes the grain?",
+        "options": [
+          "SUM(DISTINCT Amount) in every case",
+          "Aggregate each child per order first",
+          "Remove the join condition"
+        ],
+        "answer": 1,
+        "explanation": "Preaggregation produces one row per order on both sides."
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "title": "Group and filter totals",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "Which clause filters a SUM result?",
+        "options": [
+          "WHERE",
+          "HAVING",
+          "ON"
+        ],
+        "answer": 1,
+        "explanation": "HAVING is evaluated for grouped results."
+      },
+      {
+        "prompt": "Why group by CustomerID too?",
+        "options": [
+          "Names may not be unique",
+          "It always makes SQL faster",
+          "Names cannot be grouped"
+        ],
+        "answer": 0,
+        "explanation": "CustomerID defines the customer even when names repeat."
+      }
+    ]
+  },
+  {
+    "id": "12",
+    "title": "Conditional aggregation",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "What does CASE return when no WHEN matches and no ELSE exists?",
+        "options": [
+          "0",
+          "NULL",
+          "An error"
+        ],
+        "answer": 1,
+        "explanation": "The implicit ELSE value is NULL."
+      },
+      {
+        "prompt": "What grain does this aggregate return?",
+        "options": [
+          "One order",
+          "One status",
+          "One summary row"
+        ],
+        "answer": 2,
+        "explanation": "There is no GROUP BY, so the full input is one group."
+      }
+    ]
+  },
+  {
+    "id": "13",
+    "title": "CTEs as named steps",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "How long is a CTE name in scope?",
+        "options": [
+          "For the connection",
+          "For the immediately following statement",
+          "Until DROP"
+        ],
+        "answer": 1,
+        "explanation": "A CTE is scoped to one statement."
+      },
+      {
+        "prompt": "Does a CTE guarantee a stored intermediate result?",
+        "options": [
+          "Yes",
+          "Only with ORDER BY",
+          "No"
+        ],
+        "answer": 2,
+        "explanation": "The optimizer can expand the expression into the surrounding plan."
+      }
+    ]
+  },
+  {
+    "id": "14",
+    "title": "Correlated queries and APPLY",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "Which APPLY preserves customers without orders?",
+        "options": [
+          "CROSS APPLY",
+          "OUTER APPLY",
+          "Both always do"
+        ],
+        "answer": 1,
+        "explanation": "OUTER APPLY adds a NULL-extended result when there is no match."
+      },
+      {
+        "prompt": "Why order the TOP subquery?",
+        "options": [
+          "To define which order is latest",
+          "To create an index",
+          "To avoid NULL customers"
+        ],
+        "answer": 0,
+        "explanation": "TOP alone cannot identify a deterministic latest order."
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "title": "Window aggregates",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "Does a window COUNT collapse rows?",
+        "options": [
+          "Yes",
+          "No",
+          "Only for COUNT(*)"
+        ],
+        "answer": 1,
+        "explanation": "A window expression adds a value to each input row."
+      },
+      {
+        "prompt": "What does PARTITION BY CustomerID define?",
+        "options": [
+          "The final display order",
+          "A filter",
+          "Independent calculation groups"
+        ],
+        "answer": 2,
+        "explanation": "Each customer gets a separate window partition."
+      }
+    ]
+  },
+  {
+    "id": "16",
+    "title": "Ranking and ties",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "Which function finds a second distinct score?",
+        "options": [
+          "ROW_NUMBER",
+          "DENSE_RANK",
+          "COUNT"
+        ],
+        "answer": 1,
+        "explanation": "DENSE_RANK = 2 represents the second distinct ordered value."
+      },
+      {
+        "prompt": "What rank follows a two-way tie for first with RANK?",
+        "options": [
+          "2",
+          "1",
+          "3"
+        ],
+        "answer": 2,
+        "explanation": "RANK leaves a gap for the other row occupying the tied position."
+      }
+    ]
+  },
+  {
+    "id": "17",
+    "title": "Running totals and LAG",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "What is LAG’s default for a missing preceding row?",
+        "options": [
+          "0",
+          "NULL",
+          "The current value"
+        ],
+        "answer": 1,
+        "explanation": "Without a supplied default, LAG returns NULL outside the partition."
+      },
+      {
+        "prompt": "Which frame expresses cumulative rows?",
+        "options": [
+          "ROWS UNBOUNDED PRECEDING",
+          "ROWS CURRENT ROW only",
+          "An unordered partition only"
+        ],
+        "answer": 0,
+        "explanation": "It starts at the first row and ends at the current row."
+      }
+    ]
+  },
+  {
+    "id": "18",
+    "title": "Set operations",
+    "group": 2,
+    "questions": [
+      {
+        "prompt": "Which operator retains duplicates?",
+        "options": [
+          "UNION",
+          "UNION ALL",
+          "EXCEPT"
+        ],
+        "answer": 1,
+        "explanation": "UNION ALL concatenates results without duplicate elimination."
+      },
+      {
+        "prompt": "What does EXCEPT return?",
+        "options": [
+          "Distinct rows only in the left input",
+          "Every row from both inputs",
+          "Only matching rows"
+        ],
+        "answer": 0,
+        "explanation": "EXCEPT is a distinct set difference."
+      }
+    ]
+  },
+  {
+    "id": "19",
+    "title": "Temp tables and table variables",
+    "group": 3,
+    "questions": [
+      {
+        "prompt": "Where can a local temp table be accessed?",
+        "options": [
+          "Any connection",
+          "Its owning session, subject to scope",
+          "Only GitHub"
+        ],
+        "answer": 1,
+        "explanation": "Local temporary tables are isolated between sessions."
+      },
+      {
+        "prompt": "Are table variables guaranteed to stay entirely in memory?",
+        "options": [
+          "Yes",
+          "Only below 100 rows",
+          "No"
+        ],
+        "answer": 2,
+        "explanation": "They may use tempdb; choose based on measured workload behavior."
+      }
+    ]
+  },
+  {
+    "id": "20",
+    "title": "Views",
+    "group": 3,
+    "questions": [
+      {
+        "prompt": "What does an ordinary view store?",
+        "options": [
+          "A query definition",
+          "A frozen copy of the rows",
+          "A guaranteed row order"
+        ],
+        "answer": 0,
+        "explanation": "The engine executes the stored definition when the view is queried."
+      },
+      {
+        "prompt": "Where should result ordering be specified?",
+        "options": [
+          "Only at view creation",
+          "In the SELECT reading the view",
+          "In the view name"
+        ],
+        "answer": 1,
+        "explanation": "The consuming query needs ORDER BY for a guaranteed order."
+      }
+    ]
+  },
+  {
+    "id": "21",
+    "title": "Stored procedures and parameters",
+    "group": 3,
+    "questions": [
+      {
+        "prompt": "What is @CustomerID?",
+        "options": [
+          "A parameter value",
+          "A table name",
+          "A string concatenation instruction"
+        ],
+        "answer": 0,
+        "explanation": "T-SQL procedure parameters carry typed input values."
+      },
+      {
+        "prompt": "Does NOCOUNT ON suppress SELECT results?",
+        "options": [
+          "Yes",
+          "No",
+          "Only in Azure"
+        ],
+        "answer": 1,
+        "explanation": "It suppresses row-count messages while retaining selected result sets."
+      }
+    ]
+  },
+  {
+    "id": "22",
+    "title": "Functions: scalar and table-valued",
+    "group": 3,
+    "questions": [
+      {
+        "prompt": "What does an inline table-valued function return?",
+        "options": [
+          "One integer only",
+          "A query result relation",
+          "A stored procedure"
+        ],
+        "answer": 1,
+        "explanation": "It exposes a parameterized relational expression."
+      },
+      {
+        "prompt": "Which object fits a data-changing workflow?",
+        "options": [
+          "A scalar function",
+          "An inline TVF",
+          "A stored procedure"
+        ],
+        "answer": 2,
+        "explanation": "T-SQL UDFs cannot modify persistent database state."
+      }
+    ]
+  },
+  {
+    "id": "23",
+    "title": "Keys, IDENTITY, and constraints",
+    "group": 3,
+    "questions": [
+      {
+        "prompt": "Does IDENTITY alone enforce uniqueness?",
+        "options": [
+          "Yes",
+          "No",
+          "Only in Azure"
+        ],
+        "answer": 1,
+        "explanation": "A PRIMARY KEY or UNIQUE constraint enforces uniqueness."
+      },
+      {
+        "prompt": "Does CHECK (Quantity > 0) alone reject NULL?",
+        "options": [
+          "Yes",
+          "No; add NOT NULL",
+          "Only for negative values"
+        ],
+        "answer": 1,
+        "explanation": "CHECK rejects false; unknown passes. NOT NULL handles missing values."
+      }
+    ]
+  },
+  {
+    "id": "24",
+    "title": "INSERT, UPDATE, DELETE, and OUTPUT",
+    "group": 4,
+    "questions": [
+      {
+        "prompt": "Which OUTPUT image holds the previous value?",
+        "options": [
+          "inserted",
+          "deleted",
+          "previous"
+        ],
+        "answer": 1,
+        "explanation": "deleted contains the prior image for UPDATE or DELETE."
+      },
+      {
+        "prompt": "What does a missing UPDATE WHERE do?",
+        "options": [
+          "Updates all qualifying table rows",
+          "Updates just the first row",
+          "Always produces a syntax error"
+        ],
+        "answer": 0,
+        "explanation": "Without a filter every row is targeted, subject to constraints and triggers."
+      }
+    ]
+  },
+  {
+    "id": "25",
+    "title": "Transactions and error handling",
+    "group": 4,
+    "questions": [
+      {
+        "prompt": "What does XACT_STATE() = -1 mean?",
+        "options": [
+          "No transaction",
+          "An uncommittable transaction",
+          "A successful commit"
+        ],
+        "answer": 1,
+        "explanation": "The transaction can only be fully rolled back."
+      },
+      {
+        "prompt": "Should an application silently swallow every database error?",
+        "options": [
+          "Yes",
+          "Only with XACT_ABORT",
+          "No; clean up and report or rethrow"
+        ],
+        "answer": 2,
+        "explanation": "Callers need to know the operation failed."
+      }
+    ]
+  },
+  {
+    "id": "26",
+    "title": "Optimistic concurrency with rowversion",
+    "group": 4,
+    "questions": [
+      {
+        "prompt": "What does rowversion represent?",
+        "options": [
+          "A date and time",
+          "A changing binary version token",
+          "A customer ID"
+        ],
+        "answer": 1,
+        "explanation": "It changes when the row is updated; it does not encode wall-clock time."
+      },
+      {
+        "prompt": "What should a zero-row optimistic update trigger in the application?",
+        "options": [
+          "Assume success",
+          "Retry blindly forever",
+          "Handle a conflict or missing row"
+        ],
+        "answer": 2,
+        "explanation": "The row may have changed or disappeared since it was read."
+      }
+    ]
+  },
+  {
+    "id": "27",
+    "title": "Write a multi-row trigger",
+    "group": 4,
+    "questions": [
+      {
+        "prompt": "A statement updates 20 rows. How often does its DML trigger execute?",
+        "options": [
+          "20 times",
+          "Once",
+          "Never"
+        ],
+        "answer": 1,
+        "explanation": "The trigger executes once with all affected rows in its transition tables."
+      },
+      {
+        "prompt": "Does rollback also undo the trigger’s audit inserts?",
+        "options": [
+          "Yes",
+          "No",
+          "Only with a second transaction"
+        ],
+        "answer": 0,
+        "explanation": "Trigger writes are part of the triggering transaction."
+      }
+    ]
+  },
+  {
+    "id": "28",
+    "title": "Indexes and filtered indexes",
+    "group": 5,
+    "questions": [
+      {
+        "prompt": "Does every new index improve every workload?",
+        "options": [
+          "Yes",
+          "No; writes and storage also cost work",
+          "Only if filtered"
+        ],
+        "answer": 1,
+        "explanation": "Index usefulness depends on reads, writes, selectivity, and the execution plan."
+      },
+      {
+        "prompt": "What is a filtered index?",
+        "options": [
+          "An index on a subset selected by a predicate",
+          "An encrypted index",
+          "An index that forces all queries to filter"
+        ],
+        "answer": 0,
+        "explanation": "Its predicate limits which base rows have index entries."
+      }
+    ]
+  },
+  {
+    "id": "29",
+    "title": "Execution plans and logical reads",
+    "group": 5,
+    "questions": [
+      {
+        "prompt": "Does an actual execution plan require executing the query?",
+        "options": [
+          "Yes",
+          "No",
+          "Only for SELECT TOP"
+        ],
+        "answer": 0,
+        "explanation": "Actual runtime information is collected during execution."
+      },
+      {
+        "prompt": "What does STATISTICS IO expose?",
+        "options": [
+          "Only internet bandwidth",
+          "Logical and physical read information",
+          "Only storage prices"
+        ],
+        "answer": 1,
+        "explanation": "Its Messages output helps compare database I/O work."
+      }
+    ]
+  },
+  {
+    "id": "30",
+    "title": "Sargable predicates",
+    "group": 5,
+    "questions": [
+      {
+        "prompt": "Which is generally friendlier to a date index?",
+        "options": [
+          "YEAR(OrderDate) = 2026",
+          "An equivalent unwrapped date range",
+          "CAST(OrderDate AS varchar)"
+        ],
+        "answer": 1,
+        "explanation": "The range exposes usable start/end values for an index search."
+      },
+      {
+        "prompt": "What should be checked before declaring a rewrite faster?",
+        "options": [
+          "Just character count",
+          "Just the query name",
+          "Equivalent results and measured work"
+        ],
+        "answer": 2,
+        "explanation": "A fast wrong query is not a successful optimization."
+      }
+    ]
+  },
+  {
+    "id": "31",
+    "title": "Isolation and blocking",
+    "group": 5,
+    "questions": [
+      {
+        "prompt": "Does row-versioned read committed prevent all writer blocking?",
+        "options": [
+          "Yes",
+          "No",
+          "Only for indexes"
+        ],
+        "answer": 1,
+        "explanation": "Writers can still contend on the same rows."
+      },
+      {
+        "prompt": "Why is NOLOCK unsuitable as a general correctness fix?",
+        "options": [
+          "It guarantees a deadlock",
+          "It can read uncommitted or inconsistent data",
+          "It disables SELECT"
+        ],
+        "answer": 1,
+        "explanation": "Fewer read locks do not imply correct or consistent answers."
+      }
+    ]
+  },
+  {
+    "id": "32",
+    "title": "Capstone: outstanding balances",
+    "group": 5,
+    "questions": [
+      {
+        "prompt": "What is the correct overall outstanding balance?",
+        "options": [
+          "690",
+          "610",
+          "815"
+        ],
+        "answer": 1,
+        "explanation": "815 non-cancelled sales minus 205 payments equals 610."
+      },
+      {
+        "prompt": "Where should cancelled orders be excluded to preserve all customers?",
+        "options": [
+          "In the per-order relation before the LEFT JOIN",
+          "By deleting them from Orders",
+          "With a final WHERE o.Status condition on unmatched rows"
+        ],
+        "answer": 0,
+        "explanation": "Filtering the child relation preserves customers with no eligible orders."
+      }
+    ]
+  }
+]

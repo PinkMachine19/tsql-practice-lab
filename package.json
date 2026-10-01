@@ -1,0 +1,15 @@
+{
+  "name": "tsql-practice-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs && node scripts/validate.mjs",
+    "test": "node --test scripts/course.test.mjs",
+    "test:browser": "playwright test",
+    "preview": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
