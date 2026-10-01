@@ -4,7 +4,8 @@ import {lessons} from '../scripts/course.mjs';
 import {interview} from '../scripts/interview.mjs';
 test.describe('inline SQL and clipboard',()=>{
  test.describe.configure({mode:'default'});
- test('copy submits exact SQL during the tap; Chromium also verifies native paste',async({page,isMobile,browserName})=>{
+ test('copy submits exact SQL during the tap; Chromium also verifies native paste',async({page,context,isMobile,browserName})=>{
+  if(browserName==='chromium')await context.grantPermissions(['clipboard-read','clipboard-write']);
   if(browserName==='webkit')await page.addInitScript(()=>{
    const original=navigator.clipboard.writeText.bind(navigator.clipboard);
    navigator.clipboard.writeText=text=>{
